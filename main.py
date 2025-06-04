@@ -41,6 +41,10 @@ def main() -> None:
     report = compiler.compile(goal, [t.description for t in tasks], results)
     print(report)
     compiler.write("report.md", report)
+    try:
+        compiler.to_pdf("report", report)
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

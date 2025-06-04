@@ -1,0 +1,10 @@
+numpy
+scipy
+sympy
+matplotlib
+plotly
+faiss-cpu
+pylatex
+python-docx
+pdfkit
+cvxpy

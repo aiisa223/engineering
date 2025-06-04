@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -10,7 +11,7 @@ from typing import Optional
 
 class Reasoner:
     def __init__(self, model_name: str = "gemma3") -> None:
-        self.model_name = model_name
+        self.model_name = os.getenv("OLLAMA_MODEL", model_name)
         self._has_ollama = bool(shutil.which("ollama"))
 
     def think(self, prompt: str) -> str:

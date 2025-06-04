@@ -6,6 +6,8 @@ import math
 import textwrap
 from typing import Optional
 
+import sympy as sp
+
 import numpy as np
 
 
@@ -21,6 +23,9 @@ class Executor:
             radius = self._extract_number(t)
             if radius is not None:
                 return f"Area of circle (r={radius}) = {math.pi * radius ** 2:.2f}"
+        if "solve" in t and "=" in t:
+            expr = task.split("solve", 1)[-1].strip()
+            return self._solve_equation(expr)
         if t.startswith("python:" ):
             code = task[len("python:"):]
             return self._run_python(code)
@@ -42,6 +47,14 @@ class Executor:
                 u[2:] - 2 * u[1:-1] + u[:-2]
             )
         return float(np.mean(u))
+
+    def _solve_equation(self, expr: str) -> str:
+        x = sp.symbols("x")
+        try:
+            solution = sp.solve(expr, x)
+            return f"solution: {solution}"
+        except Exception as e:
+            return f"failed solving equation: {e}"
 
     def _extract_number(self, text: str) -> Optional[float]:
         for token in text.split():
