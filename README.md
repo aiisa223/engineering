@@ -1,35 +1,46 @@
-# Autonomous Engineering Agent
+# Autonomous Engineering AI Agent (Gemma 3)
 
 This project implements a fully local engineering assistant powered by the
-Ollama Gemma&nbsp;3 language model. The agent generates its own project plan,
-remembers past work, executes engineering calculations, critiques the results
-and finally compiles a Markdown report. Everything runs without any external
-services.
+Ollama Gemma 3 language model. The system plans engineering projects, carries
+out numerical simulations, critiques its own output and compiles professional
+reports – all without any network calls.
 
-## Features
+## Highlights
 
-- **Planner** – heuristically decomposes a high level goal into ordered tasks
-  and assigns priorities.
-- **MemoryManager** – keeps short‑term memory in RAM and stores long‑term
-  memories on disk. A simple vector search is available to recall relevant
-  items.
-- **Reasoner** – interfaces with a local Ollama instance. If `ollama` is not
-  installed, it falls back to an echo style response so the agent remains
-  functional.
-- **Executor** – contains small numerical simulations. A basic heat diffusion
-  example is provided along with the ability to evaluate lightweight Python
-  snippets from the LLM.
-- **CritiqueEngine** – inspects execution output and notes potential issues or
-  confirms the result looks reasonable.
-- **DocumentCompiler** – assembles the goal, tasks and results into a
-  timestamped Markdown report.
+- **Recursive Planner** – breaks objectives into ordered tasks and revises the
+  plan as work completes.
+- **MemoryManager** – combines short term history with a FAISS vector store to
+  persist knowledge across runs.
+- **Reasoner** – queries a local Ollama instance. When Ollama is unavailable the
+  agent continues in a safe echo mode.
+- **Executor** – runs Python snippets from the model and exposes small built in
+  simulations for heat diffusion and geometry problems.
+- **CritiqueEngine** – performs simple self review on each result to catch
+  obvious issues.
+- **DocumentCompiler** – produces Markdown and optionally PDF reports using
+  `pylatex` when installed.
 
-## Usage
+The package only depends on local Python libraries and does not require any
+cloud services.
 
-1. Ensure Python 3.9+ is available along with `numpy` and `scipy`. Installing
-   `ollama` and pulling the `gemma3` model is recommended for the reasoning
-   component.
-2. Run `python main.py` to launch the workflow. A Markdown report is printed to
-   the console and also written to `report.md`.
+## Getting Started
 
-Long‑term memories are stored in `memory.json` in the project directory.
+1. Install Python 3.12 and the packages in `requirements.txt`.
+   A minimal setup is:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   Optionally install `ollama` and pull the `gemma3` model for real LLM based
+   reasoning.
+2. Run the agent:
+
+   ```bash
+   python main.py
+   ```
+
+   A report will be printed to the console and saved as `report.md` in the
+   project directory.
+
+Long term memories are written to `memory.json`.

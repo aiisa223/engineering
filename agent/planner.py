@@ -16,18 +16,24 @@ class Task:
 class Planner:
     """Heuristically decomposes a goal into actionable tasks."""
 
-    def plan(self, goal: str) -> List[Task]:
+    def plan(self, goal: str, _depth: int = 0) -> List[Task]:
         if not goal:
             return []
 
-        # Split the goal into coarse segments using punctuation
-        segments = re.split(r"[.;]", goal)
-        tasks = [seg.strip() for seg in segments if seg.strip()]
+        segments = [seg.strip() for seg in re.split(r"[.;]", goal) if seg.strip()]
+        tasks: List[Task] = []
+        priority = 10 - _depth
 
-        # Provide additional standard engineering steps when certain keywords
-        # are present.
-        g = goal.lower()
-        if "nuclear" in g and "reactor" in g:
+        for seg in segments:
+            tasks.append(Task(description=seg, priority=priority))
+
+            # recursively expand certain keywords
+            lower = seg.lower()
+            if _depth < 2 and ("design" in lower or "specification" in lower):
+                tasks.extend(self.plan("Create simulation model", _depth + 1))
+                tasks.extend(self.plan("Verify requirements", _depth + 1))
+
+        if _depth == 0 and "nuclear" in goal.lower() and "reactor" in goal.lower():
             extras = [
                 "Define safety goals",
                 "Draft thermal system specification",
@@ -35,15 +41,15 @@ class Planner:
                 "Simulate coolant flow",
                 "Run heat dispersion simulation",
             ]
-            tasks.extend(extras)
+            for ext in extras:
+                tasks.extend(self.plan(ext, 1))
 
         # Remove duplicates while preserving order
         seen = set()
-        unique_tasks: List[Task] = []
-        priority = len(tasks)
+        unique: List[Task] = []
         for t in tasks:
-            if t not in seen:
-                unique_tasks.append(Task(description=t, priority=priority))
-                seen.add(t)
-                priority -= 1
-        return unique_tasks
+            if t.description not in seen:
+                seen.add(t.description)
+                unique.append(t)
+
+        return unique
